@@ -2,6 +2,8 @@ import Player from "./player.js";
 import Refugee from "./refugee.js";
 import Enemy from "./enemy.js";
 import Explosion from "./explosion.js";
+import DarthMaul from "./darthMaul.js";
+import LaserParticle from "./laserParticle.js";
 
 /**@type{HTMLCanvasElement} */
 const canvas = document.getElementById("canvas1");
@@ -12,6 +14,8 @@ canvas.height = 500;
 const refugeeArray = [];
 const enemyArray = [];
 let explosionArray = [];
+let darthMaulArray = [];
+let laseArray = [];
 
 let refugeeCaptured = 0;
 let refugeeSaved = 0;
@@ -29,6 +33,9 @@ const keys = {
     pressed: false,
   },
   arrowDown: {
+    pressed: false,
+  },
+  fKey: {
     pressed: false,
   },
 };
@@ -60,11 +67,20 @@ function initRefugees() {
 
 function initEnemies() {
   let x =
+    Math.random() * (canvas.width + 50 - (canvas.width + 25)) +
+    (canvas.width + 25);
+  let y = Math.random() * (canvas.height - 50 - 50) + 50;
+
+  enemyArray.push(new Enemy(canvas.width, canvas.height, x, y));
+}
+
+function initDarthMaul() {
+  let x =
     Math.random() * (canvas.width + 150 - (canvas.width + 50)) +
     (canvas.width + 50);
   let y = Math.random() * (canvas.height - 50 - 100) + 100;
 
-  enemyArray.push(new Enemy(canvas.width, canvas.height, x, y));
+  darthMaulArray.push(new DarthMaul(canvas.width, canvas.height, x, y));
 }
 
 function playerEnemyCollision() {
@@ -73,12 +89,7 @@ function playerEnemyCollision() {
       enemyArray.splice(i, 1);
       stormTroopersDestroyed++;
       explosionArray.push(
-        new Explosion(
-          canvas.width,
-          canvas.height,
-          player.x,
-          player.y,
-        )
+        new Explosion(canvas.width, canvas.height, player.x, player.y)
       );
     }
   }
@@ -91,7 +102,12 @@ function enemyRefugeeCollision() {
         refugeeArray.splice(j, 1);
         refugeeCaptured++;
         explosionArray.push(
-          new Explosion(canvas.width, canvas.height, enemyArray[i].x, enemyArray[i].y)
+          new Explosion(
+            canvas.width,
+            canvas.height,
+            enemyArray[i].x,
+            enemyArray[i].y
+          )
         );
       }
     }
@@ -109,25 +125,17 @@ function displayScores() {
     canvas.height - 20
   );
 }
-function enemyPlayerAvoid(){
-  for(let i = 0; i < enemyArray.length; i++){
-    let dx = player.x - enemyArray[i].x
-    let dy = player.y - enemyArray[i].y
-    let distance = Math.sqrt(dx * dx + dy * dy)
-    if(distance < player.r + enemyArray[i].r && !player.isWalking){
-      if(player.y > enemyArray[i].y){
+function enemyPlayerAvoid() {
+  for (let i = 0; i < enemyArray.length; i++) {
+    let dx = player.x - enemyArray[i].x;
+    let dy = player.y - enemyArray[i].y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < player.r + enemyArray[i].r && !player.isWalking) {
+      if (player.y > enemyArray[i].y) {
         enemyArray[i].speedY = -1.5;
-      }else{
-         enemyArray[i].speedY = 1.5;
+      } else {
+        enemyArray[i].speedY = 1.5;
       }
-
-      // if(player.y > enemyArray[i].y){
-      //   enemyArray[i].speedY = -1.5
-      // }else if( player.x > enemyArray[i].x && player.y < enemyArray[i].y){
-      //   enemyArray[i].speedY = 0
-      // }
-     
-    
     }
   }
 }
@@ -141,6 +149,16 @@ function animate() {
 
   if (frameRate % 40 == 0) {
     initEnemies();
+  }
+  if (frameRate % 150 == 0) {
+    initDarthMaul();
+  }
+  for (let i = laseArray.length-1; i > 0; i--) {
+    laseArray[i].draw(ctx);
+    laseArray[i].update();
+    if(laseArray[i].edges()){
+      laseArray.splice(i, 1)
+    }
   }
 
   player.draw(ctx);
@@ -164,6 +182,15 @@ function animate() {
       enemyArray.splice(i, 1);
     }
   }
+
+  for (let i = darthMaulArray.length - 1; i > 0; i--) {
+    darthMaulArray[i].draw(ctx);
+    darthMaulArray[i].update();
+    if (darthMaulArray[i].x <= -50) {
+      darthMaulArray.splice(i, 1);
+    }
+  }
+
   movePlayer();
   playerEnemyCollision();
   enemyRefugeeCollision();
@@ -177,6 +204,7 @@ function animate() {
       explosionArray.splice(i, 1);
     }
   }
+  console.log(laseArray.length)
   requestAnimationFrame(animate);
 }
 animate();
@@ -196,6 +224,64 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "ArrowDown") {
     keys.arrowDown.pressed = true;
     player.isWalking = true;
+  }
+  if (e.key === "f") {
+    if (player.frameY == 1) {
+      keys.fKey.pressed=true
+      laseArray.push(
+        new LaserParticle(
+          canvas.width,
+          canvas.height,
+          player.x + player.w / 2,
+          player.y + player.h / 2,
+          -3,
+          0,
+          -0.5,
+          0
+        )
+      );
+    }
+     if (player.frameY == 2) {
+       laseArray.push(
+         new LaserParticle(
+           canvas.width,
+           canvas.height,
+           player.x + player.w / 2,
+           player.y + player.h / 2,
+           3,
+           0,
+           0.5,
+           0
+         )
+       );
+     }
+        if (player.frameY == 3) {
+          laseArray.push(
+            new LaserParticle(
+              canvas.width,
+              canvas.height,
+              player.x + player.w / 2,
+              player.y + player.h / 2,
+              0,
+              -3,
+              0,
+              -0.5
+            )
+          );
+        }
+  }  if (player.frameY === 0) {
+    laseArray.push(
+      new LaserParticle(
+        canvas.width,
+        canvas.height,
+        player.x + player.w / 2,
+        player.y + player.h / 2,
+        0,
+        3,
+        0,
+        0.5
+      )
+    );
   }
 });
 
@@ -220,4 +306,9 @@ window.addEventListener("keyup", (e) => {
     player.speedY = 0;
     player.isWalking = false;
   }
+ if (e.key === "f") {
+   keys.fKey.pressed = false;
+  //  player.isWalking = false;
+   player.frameY = null
+ }
 });
