@@ -4,18 +4,19 @@ export default class LaserParticle {
     this.height = height;
     this.x = x;
     this.y = y;
-    this.r = 5;
+    this.w = 32;
+    this.h = 32
     this.velX = velX;
     this.velY = velY
     this.accX = accX
     this.accY = accY
+    this.image = document.getElementById("laserBallImage");
   }
   draw(context) {
-    context.beginPath();
-    context.fillStyle = " white";
-    context.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    context.fill();
-    context.closePath();
+    context.strokeStyle = " white";
+    // context.strokeRect(this.x,this.y,this.w, this.h)
+
+    context.drawImage(this.image, this.x - this.w/2, this.y - this.h/2,this.w, this.h)
   }
   update(){
     this.velX += this.accX
@@ -24,7 +25,7 @@ export default class LaserParticle {
     this.y += this.velY
   }
   edges(){
-    if(this.x <= 0 || this.x >= this.width || this.y <= 0 || this.y >= this.height)
+    if(this.x <= 0 || this.x >= this.width -50 || this.y <= 0 || this.y >= this.height)
     return true
   }
 }

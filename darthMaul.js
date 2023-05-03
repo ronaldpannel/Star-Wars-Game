@@ -37,13 +37,12 @@ export default class DarthMaul {
   }
   update() {
     this.frameRate++;
-    this.x += this.speedX
-    this.y += this.speedY
+    this.x += this.speedX;
+    this.y += this.speedY;
 
     if (this.y < 100 || this.y + this.h >= this.height) {
       this.speedY *= -1;
     }
-   
 
     if (this.frameX < this.maxFrames) {
       if (this.frameRate % 10 == 0) {
@@ -52,5 +51,13 @@ export default class DarthMaul {
     } else {
       this.frameX = 0;
     }
+  }
+  isColliding(other) {
+    return (
+      this.x + this.w > other.x &&
+      this.x < other.x + other.w &&
+      this.y + this.h >= other.y &&
+      this.y <= other.y + other.h
+    );
   }
 }

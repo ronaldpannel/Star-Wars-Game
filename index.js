@@ -20,6 +20,8 @@ let laseArray = [];
 let refugeeCaptured = 0;
 let refugeeSaved = 0;
 let stormTroopersDestroyed = 0;
+let darthmaulClonesDestroyed = 0;
+let gameOver = false;
 
 let frameRate = 0;
 const keys = {
@@ -69,7 +71,7 @@ function initEnemies() {
   let x =
     Math.random() * (canvas.width + 50 - (canvas.width + 25)) +
     (canvas.width + 25);
-  let y = Math.random() * (canvas.height - 50 - 50) + 50;
+  let y = Math.random() * (canvas.height - 50 - 100) + 100;
 
   enemyArray.push(new Enemy(canvas.width, canvas.height, x, y));
 }
@@ -95,6 +97,50 @@ function playerEnemyCollision() {
   }
 }
 
+function playerDarthMaulCollision() {
+  for (let i = 0; i < darthMaulArray.length; i++) {
+    if (darthMaulArray[i].isColliding(player)) {
+      ctx.fillStyle = "black";
+      ctx.font = "60px arial";
+      ctx.fillText(" GAME OVER", canvas.width / 2 - 200, canvas.height / 2);
+
+      ctx.font = "30px arial";
+      ctx.fillText(
+        " You Have Been Destroyed by the Darthmaul Clones",
+        canvas.width / 2 - 350,
+        canvas.height / 2 + 100
+      );
+      explosionArray.push(
+        new Explosion(canvas.width, canvas.height, player.x, player.y)
+      );
+
+      setTimeout(() => {
+        gameOver = true;
+      }, 100);
+    }
+  }
+}
+
+function darthmaulLaserCollision() {
+  for (let i = darthMaulArray.length - 1; i > 0; i--) {
+    for (let j = laseArray.length - 1; j > 0; j--) {
+      if (darthMaulArray[i].isColliding(laseArray[j])) {
+        darthmaulClonesDestroyed++;
+        explosionArray.push(
+          new Explosion(
+            canvas.width,
+            canvas.height,
+            darthMaulArray[i].x,
+            darthMaulArray[i].y
+          )
+        );
+        darthMaulArray.splice(i, 1);
+        laseArray.splice(j, 1);
+      }
+    }
+  }
+}
+
 function enemyRefugeeCollision() {
   for (let i = enemyArray.length - 1; i > 0; i--) {
     for (let j = refugeeArray.length - 1; j > 0; j--) {
@@ -116,12 +162,17 @@ function enemyRefugeeCollision() {
 
 function displayScores() {
   ctx.fillStyle = "black";
-  ctx.font = "16px arial";
+  ctx.font = "14px arial";
   ctx.fillText(`Refugees Captured: ${refugeeCaptured}`, 20, canvas.height - 20);
   ctx.fillText(`Refugees Saved: ${refugeeSaved}`, 210, canvas.height - 20);
   ctx.fillText(
     `Storm Troopers Destroyed: ${stormTroopersDestroyed}`,
     380,
+    canvas.height - 20
+  );
+  ctx.fillText(
+    `DarthMauls Destroyed: ${darthmaulClonesDestroyed}`,
+    590,
     canvas.height - 20
   );
 }
@@ -139,6 +190,79 @@ function enemyPlayerAvoid() {
     }
   }
 }
+function gameWinConditions(){
+  if(darthmaulClonesDestroyed >= 20){
+    ctx.font = "42px arial";
+    ctx.fillStyle = "blue";
+     ctx.fillText(
+       "'YOU WIN'",
+       canvas.width / 2 - 100,
+       canvas.height / 2 -50
+     );
+    ctx.font = "32px arial";
+    ctx.fillText('You Have Destroyed Twenty Darthmaul Clones', canvas.width/2 -300, canvas.height/2)
+    ctx.font = "26px arial";
+    ctx.fillText('LeaderShip Depleted, Storm Troopers are Retreating ', canvas.width/2 -280, canvas.height/2 + 50)
+     setTimeout(() => {
+       gameOver = true;
+     }, 300);
+  }else if(refugeeSaved >= 50){
+     ctx.font = "42px arial";
+     ctx.fillStyle = "blue";
+     ctx.fillText("'YOU WIN'", canvas.width / 2 - 100, canvas.height / 2 - 50);
+     ctx.font = "32px arial";
+     ctx.fillText(
+       "Millennium Falcon is Full and is about to Launch",
+       canvas.width / 2 - 330,
+       canvas.height / 2
+     );
+     setTimeout(() => {
+       gameOver = true;
+     }, 100);
+  }else if(stormTroopersDestroyed >= 100){
+     ctx.font = "42px arial";
+     ctx.fillStyle = "blue";
+     ctx.fillText("'YOU WIN'", canvas.width / 2 - 100, canvas.height / 2 - 50);
+     ctx.font = "32px arial";
+     ctx.fillText(
+       "You have destroyed 100 Storm Troopers ",
+       canvas.width / 2 - 280,
+       canvas.height / 2
+     );
+      ctx.font = "32px arial";
+      ctx.fillText(
+        "Storm Troopers are Retreating ",
+        canvas.width / 2 - 200,
+        canvas.height / 2 + 50
+      );
+
+    setTimeout(() => {
+      gameOver = true;
+    }, 100);
+  } else if(refugeeCaptured >= 80){
+     ctx.fillStyle = "black";
+     ctx.font = "60px arial";
+     ctx.fillText(" GAME OVER", canvas.width / 2 - 200, canvas.height / 2);
+
+     ctx.font = "30px arial";
+     ctx.fillText(
+       " 80 Refugees captured cannot Fill Ship",
+       canvas.width / 2 - 300,
+       canvas.height / 2 + 100
+     );
+      ctx.font = "30px arial";
+      ctx.fillText(
+        "Millennium Falcon Launching Empty ",
+        canvas.width / 2 - 270,
+        canvas.height / 2 + 150
+      );
+
+       setTimeout(() => {
+         gameOver = true;
+       }, 100);
+
+  }
+}
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -153,11 +277,11 @@ function animate() {
   if (frameRate % 150 == 0) {
     initDarthMaul();
   }
-  for (let i = laseArray.length-1; i > 0; i--) {
+  for (let i = laseArray.length - 1; i > 0; i--) {
     laseArray[i].draw(ctx);
     laseArray[i].update();
-    if(laseArray[i].edges()){
-      laseArray.splice(i, 1)
+    if (laseArray[i].edges()) {
+      laseArray.splice(i, 1);
     }
   }
 
@@ -194,8 +318,11 @@ function animate() {
   movePlayer();
   playerEnemyCollision();
   enemyRefugeeCollision();
+  playerDarthMaulCollision();
+  darthmaulLaserCollision();
   displayScores();
   enemyPlayerAvoid();
+  gameWinConditions()
 
   for (let i = 0; i < explosionArray.length; i++) {
     explosionArray[i].draw(ctx);
@@ -204,8 +331,9 @@ function animate() {
       explosionArray.splice(i, 1);
     }
   }
-  console.log(laseArray.length)
-  requestAnimationFrame(animate);
+  if (!gameOver) {
+    requestAnimationFrame(animate);
+  }
 }
 animate();
 window.addEventListener("keydown", (e) => {
@@ -227,7 +355,7 @@ window.addEventListener("keydown", (e) => {
   }
   if (e.key === "f") {
     if (player.frameY == 1) {
-      keys.fKey.pressed=true
+      keys.fKey.pressed = true;
       laseArray.push(
         new LaserParticle(
           canvas.width,
@@ -241,47 +369,48 @@ window.addEventListener("keydown", (e) => {
         )
       );
     }
-     if (player.frameY == 2) {
-       laseArray.push(
-         new LaserParticle(
-           canvas.width,
-           canvas.height,
-           player.x + player.w / 2,
-           player.y + player.h / 2,
-           3,
-           0,
-           0.5,
-           0
-         )
-       );
-     }
-        if (player.frameY == 3) {
-          laseArray.push(
-            new LaserParticle(
-              canvas.width,
-              canvas.height,
-              player.x + player.w / 2,
-              player.y + player.h / 2,
-              0,
-              -3,
-              0,
-              -0.5
-            )
-          );
-        }
-  }  if (player.frameY === 0) {
-    laseArray.push(
-      new LaserParticle(
-        canvas.width,
-        canvas.height,
-        player.x + player.w / 2,
-        player.y + player.h / 2,
-        0,
-        3,
-        0,
-        0.5
-      )
-    );
+    if (player.frameY == 2) {
+      laseArray.push(
+        new LaserParticle(
+          canvas.width,
+          canvas.height,
+          player.x + player.w / 2,
+          player.y + player.h / 2,
+          3,
+          0,
+          0.5,
+          0
+        )
+      );
+    }
+    if (player.frameY == 3) {
+      laseArray.push(
+        new LaserParticle(
+          canvas.width,
+          canvas.height,
+          player.x + player.w / 2,
+          player.y + player.h / 2,
+          0,
+          -3,
+          0,
+          -0.5
+        )
+      );
+    }
+    if (player.frameY === 0) {
+      laseArray.push(
+        new LaserParticle(
+          canvas.width,
+          canvas.height,
+          player.x + player.w / 2,
+          player.y + player.h / 2,
+          0,
+          3,
+          0,
+          0.5
+        )
+      );
+    }
   }
 });
 
@@ -306,9 +435,9 @@ window.addEventListener("keyup", (e) => {
     player.speedY = 0;
     player.isWalking = false;
   }
- if (e.key === "f") {
-   keys.fKey.pressed = false;
-  //  player.isWalking = false;
-   player.frameY = null
- }
+  if (e.key === "f") {
+    keys.fKey.pressed = false;
+    //player.isWalking = false;
+    player.frameY = null;
+  }
 });
