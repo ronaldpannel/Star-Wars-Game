@@ -11,17 +11,39 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 500;
 
+const expSound1 = document.getElementById("explosion1");
+const expSound2 = document.getElementById("explosion2");
+const expSound3 = document.getElementById("explosion3");
+const expSound4 = document.getElementById("explosion4");
+const expSound5 = document.getElementById("explosion5");
+const expSound6 = document.getElementById("explosion6");
+
+const laserSound = document.getElementById("laserSound");
+
+const startPage = document.getElementById("startPage");
+const startGameBtn = document.getElementById("startBtn");
+const reStartGameBtn = document.getElementById("restartBtn");
+const cloudAnimation = document.getElementById("cloud");
+
 const refugeeArray = [];
 const enemyArray = [];
 let explosionArray = [];
 let darthMaulArray = [];
 let laseArray = [];
+let soundArray = [
+  expSound1,
+  expSound2,
+  expSound3,
+  expSound4,
+  expSound5,
+  expSound6,
+];
 
 let refugeeCaptured = 0;
 let refugeeSaved = 0;
 let stormTroopersDestroyed = 0;
 let darthmaulClonesDestroyed = 0;
-let gameOver = false;
+let gameOver = true;
 
 let frameRate = 0;
 const keys = {
@@ -41,6 +63,10 @@ const keys = {
     pressed: false,
   },
 };
+function startGame() {
+  gameOver = false;
+  requestAnimationFrame(animate);
+}
 
 const player = new Player(canvas.width, canvas.height);
 
@@ -88,6 +114,7 @@ function initDarthMaul() {
 function playerEnemyCollision() {
   for (let i = enemyArray.length - 1; i > 0; i--) {
     if (enemyArray[i].isColliding(player)) {
+      soundArray[Math.floor(Math.random() * soundArray.length)].play();
       enemyArray.splice(i, 1);
       stormTroopersDestroyed++;
       explosionArray.push(
@@ -100,6 +127,8 @@ function playerEnemyCollision() {
 function playerDarthMaulCollision() {
   for (let i = 0; i < darthMaulArray.length; i++) {
     if (darthMaulArray[i].isColliding(player)) {
+      soundArray[Math.floor(Math.random() * soundArray.length)].play();
+      reStartGameBtn.classList.add("restartActive");
       ctx.fillStyle = "black";
       ctx.font = "60px arial";
       ctx.fillText(" GAME OVER", canvas.width / 2 - 200, canvas.height / 2);
@@ -125,6 +154,7 @@ function darthmaulLaserCollision() {
   for (let i = darthMaulArray.length - 1; i > 0; i--) {
     for (let j = laseArray.length - 1; j > 0; j--) {
       if (darthMaulArray[i].isColliding(laseArray[j])) {
+        soundArray[Math.floor(Math.random() * soundArray.length)].play();
         darthmaulClonesDestroyed++;
         explosionArray.push(
           new Explosion(
@@ -145,6 +175,7 @@ function enemyRefugeeCollision() {
   for (let i = enemyArray.length - 1; i > 0; i--) {
     for (let j = refugeeArray.length - 1; j > 0; j--) {
       if (enemyArray[i].isColliding(refugeeArray[j])) {
+        soundArray[Math.floor(Math.random() * soundArray.length)].play();
         refugeeArray.splice(j, 1);
         refugeeCaptured++;
         explosionArray.push(
@@ -190,84 +221,113 @@ function enemyPlayerAvoid() {
     }
   }
 }
-function gameWinConditions(){
-  if(darthmaulClonesDestroyed >= 20){
+function gameWinConditions() {
+  if (darthmaulClonesDestroyed >= 20) {
+    reStartGameBtn.classList.add("restartActive");
     ctx.font = "42px arial";
     ctx.fillStyle = "blue";
-     ctx.fillText(
-       "'YOU WIN'",
-       canvas.width / 2 - 100,
-       canvas.height / 2 -50
-     );
+    ctx.fillText("'YOU WIN'", canvas.width / 2 - 100, canvas.height / 2 - 50);
     ctx.font = "32px arial";
-    ctx.fillText('You Have Destroyed Twenty Darthmaul Clones', canvas.width/2 -300, canvas.height/2)
+    ctx.fillText(
+      "You Have Destroyed Twenty Darthmaul Clones",
+      canvas.width / 2 - 300,
+      canvas.height / 2
+    );
     ctx.font = "26px arial";
-    ctx.fillText('LeaderShip Depleted, Storm Troopers are Retreating ', canvas.width/2 -280, canvas.height/2 + 50)
-     setTimeout(() => {
-       gameOver = true;
-     }, 300);
-  }else if(refugeeSaved >= 50){
-     ctx.font = "42px arial";
-     ctx.fillStyle = "blue";
-     ctx.fillText("'YOU WIN'", canvas.width / 2 - 100, canvas.height / 2 - 50);
-     ctx.font = "32px arial";
-     ctx.fillText(
-       "Millennium Falcon is Full and is about to Launch",
-       canvas.width / 2 - 330,
-       canvas.height / 2
-     );
-     setTimeout(() => {
-       gameOver = true;
-     }, 100);
-  }else if(stormTroopersDestroyed >= 100){
-     ctx.font = "42px arial";
-     ctx.fillStyle = "blue";
-     ctx.fillText("'YOU WIN'", canvas.width / 2 - 100, canvas.height / 2 - 50);
-     ctx.font = "32px arial";
-     ctx.fillText(
-       "You have destroyed 100 Storm Troopers ",
-       canvas.width / 2 - 280,
-       canvas.height / 2
-     );
-      ctx.font = "32px arial";
-      ctx.fillText(
-        "Storm Troopers are Retreating ",
-        canvas.width / 2 - 200,
-        canvas.height / 2 + 50
-      );
+    ctx.fillText(
+      "LeaderShip Depleted, Storm Troopers are Retreating ",
+      canvas.width / 2 - 280,
+      canvas.height / 2 + 50
+    );
+    setTimeout(() => {
+      gameOver = true;
+    }, 300);
+  } else if (refugeeSaved >= 50) {
+    reStartGameBtn.classList.add("restartActive");
+    ctx.font = "42px arial";
+    ctx.fillStyle = "blue";
+    ctx.fillText("'YOU WIN'", canvas.width / 2 - 100, canvas.height / 2 - 50);
+    ctx.font = "32px arial";
+    ctx.fillText(
+      "Millennium Falcon is Full and is about to Launch",
+      canvas.width / 2 - 330,
+      canvas.height / 2
+    );
+    setTimeout(() => {
+      gameOver = true;
+    }, 100);
+  } else if (stormTroopersDestroyed >= 100) {
+    reStartGameBtn.classList.add("restartActive");
+    ctx.font = "42px arial";
+    ctx.fillStyle = "blue";
+    ctx.fillText("'YOU WIN'", canvas.width / 2 - 100, canvas.height / 2 - 50);
+    ctx.font = "32px arial";
+    ctx.fillText(
+      "You have destroyed 100 Storm Troopers ",
+      canvas.width / 2 - 280,
+      canvas.height / 2
+    );
+    ctx.font = "32px arial";
+    ctx.fillText(
+      "Storm Troopers are Retreating ",
+      canvas.width / 2 - 200,
+      canvas.height / 2 + 50
+    );
 
     setTimeout(() => {
       gameOver = true;
     }, 100);
-  } else if(refugeeCaptured >= 80){
-     ctx.fillStyle = "black";
-     ctx.font = "60px arial";
-     ctx.fillText(" GAME OVER", canvas.width / 2 - 200, canvas.height / 2);
+  } else if (refugeeCaptured >= 100) {
+    reStartGameBtn.classList.add("restartActive");
+    ctx.fillStyle = "black";
+    ctx.font = "60px arial";
+    ctx.fillText(" GAME OVER", canvas.width / 2 - 200, canvas.height / 2);
 
-     ctx.font = "30px arial";
-     ctx.fillText(
-       " 80 Refugees captured cannot Fill Ship",
-       canvas.width / 2 - 300,
-       canvas.height / 2 + 100
-     );
-      ctx.font = "30px arial";
-      ctx.fillText(
-        "Millennium Falcon Launching Empty ",
-        canvas.width / 2 - 270,
-        canvas.height / 2 + 150
-      );
+    ctx.font = "30px arial";
+    ctx.fillText(
+      " 100 Refugees captured cannot Fill Ship",
+      canvas.width / 2 - 300,
+      canvas.height / 2 + 100
+    );
+    ctx.font = "30px arial";
+    ctx.fillText(
+      "Millennium Falcon Launching Empty ",
+      canvas.width / 2 - 270,
+      canvas.height / 2 + 150
+    );
 
-       setTimeout(() => {
-         gameOver = true;
-       }, 100);
+    setTimeout(() => {
+      gameOver = true;
+    }, 100);
+  } else if (darthmaulClonesDestroyed >= 20) {
+    reStartGameBtn.classList.add("restartActive");
+    ctx.fillStyle = "black";
+    ctx.font = "60px arial";
+    ctx.fillText(" YOU WIN", canvas.width / 2 - 200, canvas.height / 2);
 
+    ctx.font = "30px arial";
+    ctx.fillText(
+      " You have destroyed 20 Darthmaul Clones",
+      canvas.width / 2 - 300,
+      canvas.height / 2 + 100
+    );
+    ctx.font = "30px arial";
+    ctx.fillText(
+      "Storm Trooper Regiment Retreating  ",
+      canvas.width / 2 - 270,
+      canvas.height / 2 + 150
+    );
+
+    setTimeout(() => {
+      gameOver = true;
+    }, 100);
   }
 }
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   frameRate++;
-  if (frameRate % 70 == 0) {
+  if (frameRate % 40 == 0) {
     initRefugees();
   }
 
@@ -322,7 +382,7 @@ function animate() {
   darthmaulLaserCollision();
   displayScores();
   enemyPlayerAvoid();
-  gameWinConditions()
+  gameWinConditions();
 
   for (let i = 0; i < explosionArray.length; i++) {
     explosionArray[i].draw(ctx);
@@ -356,6 +416,7 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "f") {
     if (player.frameY == 1) {
       keys.fKey.pressed = true;
+      laserSound.play();
       laseArray.push(
         new LaserParticle(
           canvas.width,
@@ -370,6 +431,7 @@ window.addEventListener("keydown", (e) => {
       );
     }
     if (player.frameY == 2) {
+      laserSound.play();
       laseArray.push(
         new LaserParticle(
           canvas.width,
@@ -384,6 +446,7 @@ window.addEventListener("keydown", (e) => {
       );
     }
     if (player.frameY == 3) {
+      laserSound.play();
       laseArray.push(
         new LaserParticle(
           canvas.width,
@@ -398,6 +461,7 @@ window.addEventListener("keydown", (e) => {
       );
     }
     if (player.frameY === 0) {
+      laserSound.play();
       laseArray.push(
         new LaserParticle(
           canvas.width,
@@ -440,4 +504,16 @@ window.addEventListener("keyup", (e) => {
     //player.isWalking = false;
     player.frameY = null;
   }
+});
+
+startGameBtn.addEventListener("click", (e) => {
+  cloudAnimation.classList.add("cloudActive");
+
+  setTimeout(() => {
+    startPage.classList.add("inactive");
+    startGame();
+  }, 900);
+});
+reStartGameBtn.addEventListener("click", (e) => {
+  location.reload();
 });

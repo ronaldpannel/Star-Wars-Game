@@ -1,38 +1,143 @@
-*{
-    padding: 0;
-    margin: o;
-    box-sizing: border-box;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
-body{
-   background-color: black;
+body {
+  background-color: black;
+  overflow: hidden;
+  color: wheat;
 }
-.gameWrapper{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 800px;
-    height: 500px;
-    border: 1px solid white;
-    max-width: 100%;
-    max-height: 100%;
+.gameWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 500px;
+  border: 1px solid white;
+  max-width: 100%;
+  max-height: 100%;
 }
 
-.canvas1{
-    background-image: url('tattooinBG.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size:cover;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 800px;
-    height: 500px;
-    border: 1px solid white;
-    max-width: 100%;
-    max-height: 100%;
+.canvas1 {
+  background-image: url("tattooinBG.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 500px;
+  border: 1px solid white;
+  max-width: 100%;
+  max-height: 100%;
 }
-.images{
-    display: none;
+.startPage {
+  background-image: url("startBg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;;
+  width: 800px;
+  height: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  text-align: center;
+  border: white 1px solid;
+  max-width: 100%;
+  max-height: 100%;
+  z-index: 10;
+}
+.title {
+  color: wheat;
+}
+.restartBtn {
+  width: 120px;
+  height: 30px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 16px;
+  border-radius: 20px;
+  display: none;
+  outline: none;
+  border: 1px solid wheat;
+  background-color: blueviolet;
+  color: rgb(209, 157, 61);
+  border: 1px solid wheat;
+  box-shadow: 3px 3px 2px black;
+  cursor: pointer;
+}
+.restartBtn:hover {
+  border: 1px solid blueviolet;
+  box-shadow: inset 3px 3px 2px black;
+}
+.story {
+  font-size: 17px;
+}
+span {
+  font-size: 15px;
+}
+.gameOverText {
+  background-color: rgba(37, 37, 158, 0.6);
+  color: wheat;
+}
+.startBtn {
+  width: 220px;
+  height: 40px;
+  font-size: 20px;
+  border-radius: 20px;
+  outline: none;
+  border: 1px solid wheat;
+  background-color: blueviolet;
+  color: rgb(209, 157, 61);
+  border: 1px solid wheat;
+  box-shadow: 3px 3px 2px black;
+  cursor: pointer;
+}
+.startBtn:hover {
+  border: 1px solid blueviolet;
+  box-shadow: inset 3px 3px 2px black;
+}
+.cloud {
+  position: absolute;
+  top: 70%;
+  width: 210px;
+  height: 210px;
+  display: none;
+  border-radius: 50%;
+  background: transparent url("boom.png");
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  animation: cloud 1s steps(5) infinite;
+}
+@keyframes cloud {
+  100% {
+    background-position: -1000px, 0;
+  }
+}
+.inactive {
+  display: none;
+}
+.active {
+  display: flex;
+}
+.cloudActive {
+  display: block;
+}
+.restartActive{
+  display: block;
+}
+
+.images {
+  display: none;
 }

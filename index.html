@@ -9,10 +9,56 @@
     <script type="module" src="index.js"></script>
   </head>
   <body>
+      <audio id="explosion1" src="explosion1.wav"></audio>
+    <audio id="explosion2" src="explosion2.wav"></audio>
+    <audio id="explosion3" src="explosion3.wav"></audio>
+    <audio id="explosion4" src="explosion4.wav"></audio>
+    <audio id="explosion5" src="explosion5.wav"></audio>
+    <audio id="explosion6" src="explosion6.wav"></audio>
+    <audio id="laserSound" src="laser1.wav"></audio>
+    
     <div class="gameWrapper">
       <canvas class="canvas1" id="canvas1"> </canvas>
-    </div>
+      <div class="startPage" id="startPage">
+        <h1 class="title">Star Wars Game</h1>
+        <p class="story">
+          Humans are fleeing Earth due to climate change, the refugees have
+          <br />
+          located the Plant Tattooin which can support human life. However,<br />
+          on the other side of the plant is a Storm Trooper regiment who are
+          <br />
+          determined to drive the refugees off the plant.
+        </p>
 
+        <h3>
+          Player Controls:
+          <span
+            >Arrow keys move the Player (Chewie) Up, Down, <br />
+            Left and Right, F key fires Player Laser
+          </span>
+        </h3>
+
+        <h3>
+          Win Game Conditions:
+          <span
+            >Play long enough for the ship to be filled with <br />
+            50 refugees. Destroy 20 Darthmaul Clones using the Players Laser
+            <br />
+            Destroy 100 Storm Troopers by colliding the Player with the <br />
+            Storm Troopers</span
+          >
+        </h3>
+
+        <h3 class="gameOverText">Lose Game Conditions : <span> If Darthmaul collides with player, <br> if 100 refugees are captured by the Storm Troopers</span></h3>
+
+         <div class="cloud" id="cloud"></div>
+        <button class="startBtn" id="startBtn">Start Game</button>
+      </div>
+
+       <button class="restartBtn" id="restartBtn">Restart Game</button>
+    </div>
+    
+   
     <div class="images">
       <img class="chewieImage" id="chewieImage" src="chewie.png" alt="" />
       <img
@@ -33,7 +79,7 @@
         alt=""
       />
       <img class="boomImage" id="boomImage" src="boom.png" alt="" />
-      <img src="laserBall.png" id="laserBallImage" alt="">
+      <img src="laserBall.png" id="laserBallImage" alt="" />
     </div>
   </body>
 </html>
